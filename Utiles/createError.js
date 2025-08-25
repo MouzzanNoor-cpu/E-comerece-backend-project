@@ -8,5 +8,3 @@ const createError = (status, message) => {
 // export default createError;
 module.exports = createError;
 
-// to use this function in the controller,
-// next(createError(400, "something went wrong"))

@@ -27,7 +27,7 @@ router.get('/user/:id', GetUserByID); // renamed for clarity
 // Forget password flow
 router.post('/forget-password/send-email', forgetPasswordStepOne);
 router.post('/forget-password/verify-code', forgetPasswordStepTwo);
-router.post('/forget-password/reset-password', resetPassword); // no :userId param, user identified by email in body or token
+router.post('/forget-password/reset-password', resetPassword); 
 
 // Authenticated routes
 router.post('/logout', logout);

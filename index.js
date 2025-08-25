@@ -8,24 +8,24 @@ const cors = require("cors");
 const app = express();
 dotenv.config();
 
-// ✅ Connect MongoDB
+// Connect MongoDB
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("DB Connection successful"))
   .catch((err) => console.error("DB Error:", err));
 
-// ✅ Middleware (MUST COME BEFORE ROUTES)
+// Middleware 
 app.use(cors({ origin: "*", credentials: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// ✅ Root test route
+// Root test route
 app.get('/', (req, res) => {
   res.send('E-Commerce API is running');
 });
 
-// ✅ Route imports
+// Route imports
 const productRoute = require("./routes/product");
 const acess = require("./routes/Accessories");
 const Grap = require("./routes/Graphiccards");
@@ -41,7 +41,7 @@ const divideOrders = require('./routes/divideOrders');
 const adminRoutes = require("./routes/admin");
 const adminAuthRoutes = require("./routes/adminAuth");
 
-// ✅ Mount all routes
+// Mount all routes
 app.use("/api/admin-auth", adminAuthRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api", productRoute);
@@ -58,7 +58,7 @@ app.use("/api", User);
 app.use("/api/payment", paymentRoutes);
 app.use("/uploads", express.static('uploads'));
 
-// ✅ Error handling middleware (should be last)
+//  Error handling middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({
@@ -67,8 +67,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ✅ Start server
-const PORT = process.env.PORT || 4000;
+// Start server
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Backend server is running on port ${PORT}`);
 });
