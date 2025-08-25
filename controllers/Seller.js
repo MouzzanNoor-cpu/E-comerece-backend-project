@@ -254,7 +254,6 @@ const getShopById = async (req, res, next) => {
   }
 };
 
-
 module.exports = {
   createSeller,
   SignInSeller,

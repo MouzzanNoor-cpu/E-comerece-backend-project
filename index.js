@@ -1,78 +1,74 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const http = require('http');
 const cookieParser = require('cookie-parser');
-const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const cors = require("cors");
+
+const app = express();
+dotenv.config();
+
+// ✅ Connect MongoDB
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("DB Connection successful"))
+  .catch((err) => console.error("DB Error:", err));
+
+// ✅ Middleware (MUST COME BEFORE ROUTES)
+app.use(cors({ origin: "*", credentials: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+// ✅ Root test route
+app.get('/', (req, res) => {
+  res.send('E-Commerce API is running');
+});
+
+// ✅ Route imports
 const productRoute = require("./routes/product");
-const acess=require("./routes/Accessories")
-const Grap=require("./routes/Graphiccards")
-const pkg=require("./routes/packages")
+const acess = require("./routes/Accessories");
+const Grap = require("./routes/Graphiccards");
+const pkg = require("./routes/packages");
 const cartRoute = require("./routes/cart");
 const orderRoute = require("./routes/order");
 const newsletterRoute = require("./routes/newsletter");
 const stripeRoute = require("./routes/stripe");
 const seller = require('./routes/seller');
-const User = require('./routes/user')
+const User = require('./routes/user');
 const paymentRoutes = require('./routes/paymentRoutes');
-const divideOrders = require('./routes/divideOrders')
-const cors = require("cors");
+const divideOrders = require('./routes/divideOrders');
 const adminRoutes = require("./routes/admin");
 const adminAuthRoutes = require("./routes/adminAuth");
+
+// ✅ Mount all routes
 app.use("/api/admin-auth", adminAuthRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api", productRoute);
+app.use("/api", acess);
+app.use("/api", Grap);
+app.use("/api", pkg);
+app.use("/api", cartRoute);
+app.use("/api", orderRoute);
+app.use("/api", stripeRoute);
+app.use("/api", newsletterRoute);
+app.use("/api", seller);
+app.use("/api", divideOrders);
+app.use("/api", User);
+app.use("/api/payment", paymentRoutes);
+app.use("/uploads", express.static('uploads'));
 
-
-
-
-
-dotenv.config();
-
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("DB Connection successfull"))
-  .catch((err) => {
-    console.log(err);
-  });
-  app.use(cookieParser());
-
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({extended: false}))
-
- app.use(cors({origin: "*", credentials: true}))
- 
- app.use((err, req, res, next) => {
+// ✅ Error handling middleware (should be last)
+app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({
-      success: false,
-      message: err.message || 'Something went wrong!',
+    success: false,
+    message: err.message || 'Something went wrong!',
   });
 });
 
-// Serve a simple message at root URL
-app.get('/', (req, res) => {
-  res.send('E-Commerce API is running');
-});
-
-app.use("/api/admin-auth", adminAuthRoutes);
-
- app.use("/api", productRoute);
- app.use('/api', User)
- app.use("/api", cartRoute);
- app.use("/api", orderRoute)
- app.use("/api", stripeRoute)
- app.use("/api", newsletterRoute);
- app.use("/api/",acess)
- app.use("/api",Grap)
- app.use("/api",pkg)
- app.use("/api", seller);
- app.use("/uploads", express.static('uploads'));
- app.use("/api",divideOrders)
- app.use('/api/payment', paymentRoutes);
- app.use("/api/admin", adminRoutes);
- 
-
-
-app.listen(process.env.PORT  || 4000, () => {
-  console.log("Backend server is running!");
+// ✅ Start server
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Backend server is running on port ${PORT}`);
 });

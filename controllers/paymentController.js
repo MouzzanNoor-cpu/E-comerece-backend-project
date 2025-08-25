@@ -2,7 +2,7 @@ const paypal = require('../config/paypalConfig');
 
 // Create PayPal Payment Order
 exports.createOrder = (req, res) => {
-  const { totalAmount } = req.body; // Amount passed from frontend
+  const { totalAmount } = req.body; 
 
   const create_payment_json = {
     intent: 'sale',

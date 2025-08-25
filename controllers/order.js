@@ -1,11 +1,9 @@
 const Order = require('../models/Order'); 
 
-
 const createOrder = async (req, res) => {
     try {
         const { userId, products, amount, name, phone, address, status, shopId } = req.body;
 
-        // Create a new order
         const newOrder = new Order({
             userId,
             products,
@@ -16,6 +14,7 @@ const createOrder = async (req, res) => {
             status, 
             shopId
         });
+
         const savedOrder = await newOrder.save();
         return res.status(201).json({
             message: 'Order created successfully',
@@ -26,10 +25,14 @@ const createOrder = async (req, res) => {
         return res.status(500).json({ error: 'Failed to create order' });
     }
 };
+
 const getOneOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
-        const order = await Order.findById(orderId);
+        const order = await Order.findById(orderId)
+            .populate('userId', 'username email')                // populate user
+            .populate('products.productId', 'name price')        // populate product info
+            .populate('shopId', 'shopName');                      // populate shop/seller info
 
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
@@ -41,12 +44,18 @@ const getOneOrder = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch order' });
     }
 };
+
 const getAllOrders = async (req, res) => {
     try {
-        const orders = await Order.find(); 
+        const orders = await Order.find()
+            .populate('userId', 'username email')
+            .populate('products.productId', 'name price')
+            .populate('shopId', 'shopName');
+
         const totalOrders = await Order.countDocuments();
+
         res.status(200).json({
-            totalOrders, 
+            totalOrders,
             orders       
         });
     } catch (error) {
@@ -54,6 +63,7 @@ const getAllOrders = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch orders' });
     }
 };
+
 const deleteOneOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -69,6 +79,7 @@ const deleteOneOrder = async (req, res) => {
         res.status(500).json({ error: 'Failed to delete order' });
     }
 };
+
 const acceptOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -88,6 +99,7 @@ const acceptOrder = async (req, res) => {
         res.status(500).json({ error: 'Failed to accept order' });
     }
 };
+
 const LateOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -107,6 +119,7 @@ const LateOrder = async (req, res) => {
         res.status(500).json({ error: 'Failed to update order status' });
     }
 };
+
 const DeliveredOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -126,6 +139,7 @@ const DeliveredOrder = async (req, res) => {
         res.status(500).json({ error: 'Failed to update order status' });
     }
 };
+
 const INPROGRESSorder = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -145,6 +159,7 @@ const INPROGRESSorder = async (req, res) => {
         res.status(500).json({ error: 'Failed to update order status' });
     }
 };
+
 const CancelledOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -164,7 +179,6 @@ const CancelledOrder = async (req, res) => {
         res.status(500).json({ error: 'Failed to cancel order' });
     }
 };
-
 
 module.exports = {
     createOrder,
