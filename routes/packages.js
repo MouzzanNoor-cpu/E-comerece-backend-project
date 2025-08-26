@@ -36,6 +36,7 @@ router.post("/package", auth, async (req, res) => {
 
   try {
     const savedPackage = await newPackage.save();
+    // console.log(savedPackage);
     return res.status(200).send("Package added successfully");
   } catch (error) {
     return res.status(400).send("Error occurred creating package");

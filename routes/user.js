@@ -20,9 +20,9 @@ const router = express.Router();
 
 // Public routes
 router.post('/signup', SignUp);
-router.post('/signin', SignIn); // lowercase 'signin' for consistency
+router.post('/signin', SignIn);
 router.get('/signin/:userId', GetLoggedInUser);
-router.get('/user/:id', GetUserByID); // renamed for clarity
+router.get('/user/:id', GetUserByID);
 
 // Forget password flow
 router.post('/forget-password/send-email', forgetPasswordStepOne);
