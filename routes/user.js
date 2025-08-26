@@ -21,8 +21,8 @@ const router = express.Router();
 // Public routes
 router.post('/signup', SignUp);
 router.post('/signin', SignIn);
-router.get('/signin/:userId', GetLoggedInUser);
-router.get('/user/:id', GetUserByID);
+router.get('/signin/:userId', auth,GetLoggedInUser);
+router.get('/user/:id',auth ,GetUserByID);
 
 // Forget password flow
 router.post('/forget-password/send-email', forgetPasswordStepOne);
